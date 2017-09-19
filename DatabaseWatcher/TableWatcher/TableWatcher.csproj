@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,13 +52,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtributoBanco.cs" />
+    <Compile Include="AtributoESocial.cs" />
     <Compile Include="Base\ITableWatcher.cs" />
     <Compile Include="Base\TableWatcherBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TableWatcherOracle.cs" />
     <Compile Include="TableWatcherSqlServer.cs" />
     <Compile Include="TableWatcherStrategy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
