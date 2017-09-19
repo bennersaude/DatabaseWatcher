@@ -12,6 +12,11 @@ namespace TableWatcher.Base
     public abstract class TableWatcherBase<T> where T : class
     {
         protected ModelToTableMapper<T> mapper;
+        protected String nomeEntidadeSqlServer = typeof(T).Name.Substring(0, 17); //Nas versões atuais do banco de dados caso o nome possua mais de 17 caracteres será retornado um erro;
+        protected String nomeEntidadeOracle = typeof(T).Name.Substring(0, 17).ToUpper(); //Nas versões atuais do banco de dados caso o nome possua mais de 17 caracteres será retornado um erro;
+        protected IList<String> listaUpdate;
+
+
         protected virtual void MapearEntidade()
         {
             mapper = new ModelToTableMapper<T>();
@@ -33,10 +38,10 @@ namespace TableWatcher.Base
                 object[] attrs = prop.GetCustomAttributes(true);
                 foreach (object attr in attrs)
                 {
-                    var authAttr = attr as AtributoBanco;
+                    var authAttr = attr as AtributoESocial;
                     if (authAttr != null)
                     {
-                        var auth = authAttr.NomeBanco;
+                        var auth = authAttr.NomeCampoBanco;
                         valores.Add(prop, auth);
                     }
                 }
