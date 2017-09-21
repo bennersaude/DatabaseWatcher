@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -8,6 +9,7 @@ using TableDependency;
 using TableDependency.Enums;
 using TableDependency.SqlClient;
 using TableWatcher.Base;
+using TableWatcher.Interface;
 
 namespace TableWatcher
 {
@@ -48,25 +50,20 @@ namespace TableWatcher
         {
             if (e.ChangeType != ChangeType.None)
             {
-                PropertyInfo propInfo = e.Entity.GetType().GetProperty("Handle");
-                object itemValue = propInfo.GetValue(e.Entity, null);
-
-                switch (e.ChangeType)
-                {
-                    case ChangeType.Delete:
-                        Console.WriteLine($"Deletou Id:{ itemValue }");
-                        break;
-                    case ChangeType.Insert:
-                        Console.WriteLine($"Inseriu Id:{ itemValue }");
-                        break;
-                    case ChangeType.Update:
-                        Console.WriteLine($"Atualizou Id:{ itemValue }");
-                        break;
-                }
+                Task.Run(() => InserirOnChange(e));
             }
         }
 
-     
+        public async Task InserirOnChange(TableDependency.EventArgs.RecordChangedEventArgs<T> e)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                await Task.Run(() => connection.OpenAsync());
+                SqlCommand insertCommand = MontaInsertCommand(connection, e);
+                await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
+            }
+        }
+
 
     }
 }

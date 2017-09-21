@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -18,21 +20,20 @@ namespace TableWatcher.Base
 
         protected IList<String> listaUpdate;
 
-
         protected virtual void MapearEntidade()
         {
             mapper = new ModelToTableMapper<T>();
-
-            foreach (var prop in GetValues())
+            listaUpdate = new List<String>();
+            foreach (var prop in GetValuesForMapper())
             {
-                mapper.AddMapping(c => prop.Key, prop.Value);
+                mapper.AddMapping(prop.Key, prop.Value);
+                listaUpdate.Add(prop.Value);
             }
         }
 
-        private Dictionary<PropertyInfo, string> GetValues()
+        private Dictionary<PropertyInfo, string> GetValuesForMapper()
         {
             Dictionary<PropertyInfo, string> valores = new Dictionary<PropertyInfo, string>();
-
 
             PropertyInfo[] props = typeof(T).GetProperties();
             foreach (PropertyInfo prop in props)
@@ -48,12 +49,78 @@ namespace TableWatcher.Base
                     }
                 }
             }
+
             return valores;
         }
 
         private static string GetNomeEntidadeSqlServer(int TamanhoMaximo)
         {
             return typeof(T).Name.Length > TamanhoMaximo ? typeof(T).Name.Substring(0, TamanhoMaximo) : typeof(T).Name;
+        }
+
+        protected virtual SqlCommand MontaInsertCommand(SqlConnection connection, TableDependency.EventArgs.RecordChangedEventArgs<T> e)
+        {
+            SqlCommand command = new SqlCommand();
+
+            Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
+
+            string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
+            string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
+
+            string sql = $"INSERT INTO {nomeEntidadeSqlServer}ESOCIAL ({fields}) values ({values})";
+            foreach (var item in dicionarioValoresInsert)
+            {
+                command.Parameters.AddWithValue(item.Key, item.Value);
+            }
+
+            command.Connection = connection;
+            command.CommandText = sql;
+
+            return command;
+        }
+
+        protected virtual OracleCommand MontaInsertCommand(OracleConnection connection, TableDependency.EventArgs.RecordChangedEventArgs<T> e)
+        {
+            OracleCommand command = new OracleCommand();
+
+            Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
+
+            string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
+            string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
+
+            string sql = $"INSERT INTO {nomeEntidadeOracle}ESOCIAL ({fields}) values ({values})";
+            foreach (var item in dicionarioValoresInsert)
+            {
+                command.Parameters.Add(item.Key, item.Value);
+            }
+
+            command.Connection = connection;
+            command.CommandText = sql;
+
+            return command;
+        }
+
+        private Dictionary<String, object> GetValuesForInsert(TableDependency.EventArgs.RecordChangedEventArgs<T> evento)
+        {
+            Dictionary<String, object> valores = new Dictionary<String, object>();
+
+            List<PropertyInfo> propriedades = new List<PropertyInfo>(evento.Entity.GetType().GetProperties());
+
+            foreach (PropertyInfo prop in propriedades)
+            {
+                object[] attrs = prop.GetCustomAttributes(true);
+                foreach (object attr in attrs)
+                {
+                    var atributoEsocial = attr as AtributoESocial;
+                    object valorPropriedade = prop.GetValue(evento.Entity, null);
+
+                    valores.Add(atributoEsocial.NomeCampoBanco, valorPropriedade);
+                }
+            }
+            int valorOperacao = Convert.ToInt32(evento.ChangeType);
+            valores.Add("TipoOperacao", valorOperacao.ToString());
+
+            return valores;
         }
     }
 }

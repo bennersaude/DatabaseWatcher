@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseWatcher", "DatabaseWatcher\DatabaseWatcher.csproj", "{B1193B3D-2FC2-4E76-AD4A-AC6A4E039A59}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableWatcher", "TableWatcher\TableWatcher.csproj", "{AF2C442B-6A6C-4E3C-BF2E-EE719705D82D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseWatcherService", "DatabaseWatcherService\DatabaseWatcherService.csproj", "{679D5AC3-6BF2-4D54-9A5B-5A510034F624}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B1193B3D-2FC2-4E76-AD4A-AC6A4E039A59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1193B3D-2FC2-4E76-AD4A-AC6A4E039A59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1193B3D-2FC2-4E76-AD4A-AC6A4E039A59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1193B3D-2FC2-4E76-AD4A-AC6A4E039A59}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AF2C442B-6A6C-4E3C-BF2E-EE719705D82D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AF2C442B-6A6C-4E3C-BF2E-EE719705D82D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF2C442B-6A6C-4E3C-BF2E-EE719705D82D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF2C442B-6A6C-4E3C-BF2E-EE719705D82D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{679D5AC3-6BF2-4D54-9A5B-5A510034F624}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{679D5AC3-6BF2-4D54-9A5B-5A510034F624}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{679D5AC3-6BF2-4D54-9A5B-5A510034F624}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{679D5AC3-6BF2-4D54-9A5B-5A510034F624}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
