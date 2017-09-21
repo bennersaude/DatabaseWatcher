@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TableWatcher.Adapter;
 using TableWatcher.Base;
+using TableWatcher.Interface;
 
 namespace TableWatcher
 {
     public class TableWatcherStrategy<T> where T : class
     {
+        private const string OracleConnectionString = "oracleConnectionString";
+        private const string SqlServerConnectionString = "sqlServerConnectionString";
+
         private ITableWatcher<T> TableWatcherAbstract;
 
-        public TableWatcherStrategy(ITableWatcher<T> tableWatcherAbstract)
+        public TableWatcherStrategy()
         {
-            TableWatcherAbstract = tableWatcherAbstract;
+            TableWatcherAbstract = new AdapterFactory<T>().GetAdapter();
         }
 
         public void InitializeTableWatcher()

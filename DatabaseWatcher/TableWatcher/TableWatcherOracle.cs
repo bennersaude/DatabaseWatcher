@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using TableDependency.Enums;
 using TableDependency.OracleClient;
 using TableWatcher.Base;
+using TableWatcher.Interface;
 
 namespace TableWatcher
 {
@@ -44,21 +47,17 @@ namespace TableWatcher
         {
             if (e.ChangeType != ChangeType.None)
             {
-                PropertyInfo propInfo = e.Entity.GetType().GetProperty("Handle");
-                object itemValue = propInfo.GetValue(e.Entity, null);
+                Task.Run(() => InserirOnChange(e));
+            }
+        }
 
-                switch (e.ChangeType)
-                {
-                    case ChangeType.Delete:
-                        Console.WriteLine($"Deletou Id:{ itemValue }");
-                        break;
-                    case ChangeType.Insert:
-                        Console.WriteLine($"Inseriu Id:{ itemValue }");
-                        break;
-                    case ChangeType.Update:
-                        Console.WriteLine($"Atualizou Id:{ itemValue }");
-                        break;
-                }
+        public async Task InserirOnChange(TableDependency.EventArgs.RecordChangedEventArgs<T> e)
+        {
+            using (OracleConnection connection = new OracleConnection(ConnectionString))
+            {
+                await Task.Run(() => connection.OpenAsync());
+                OracleCommand insertCommand = MontaInsertCommand(connection, e);
+                await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
             }
         }
     }
