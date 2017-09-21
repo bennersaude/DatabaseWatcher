@@ -1,6 +1,7 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
@@ -15,8 +16,10 @@ namespace TableWatcher.Base
     {
         protected ModelToTableMapper<T> mapper;
 
-        protected String nomeEntidadeSqlServer = GetNomeEntidadeSqlServer(17); //Nas versões atuais do banco de dados caso o nome possua mais de 17 caracteres será retornado um erro;
+        protected String nomeEntidade = GetNomeEntidadeSqlServer(17); //Nas versões atuais do banco de dados caso o nome possua mais de 17 caracteres será retornado um erro;
         protected String nomeEntidadeOracle = GetNomeEntidadeSqlServer(17).ToUpper(); //Nas versões atuais do banco de dados caso o nome possua mais de 17 caracteres será retornado um erro;
+
+        protected Boolean destruirObjetosWatcher = Convert.ToBoolean(ConfigurationManager.AppSettings["destruirObjetosWatcher"]);
 
         protected IList<String> listaUpdate;
 
@@ -67,7 +70,7 @@ namespace TableWatcher.Base
             string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
             string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
 
-            string sql = $"INSERT INTO {nomeEntidadeSqlServer}ESOCIAL ({fields}) values ({values})";
+            string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
             foreach (var item in dicionarioValoresInsert)
             {
                 command.Parameters.AddWithValue(item.Key, item.Value);
@@ -88,7 +91,7 @@ namespace TableWatcher.Base
             string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
             string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
 
-            string sql = $"INSERT INTO {nomeEntidadeOracle}ESOCIAL ({fields}) values ({values})";
+            string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
             foreach (var item in dicionarioValoresInsert)
             {
                 command.Parameters.Add(item.Key, item.Value);
