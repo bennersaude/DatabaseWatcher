@@ -23,7 +23,7 @@ namespace TableWatcher
 
         public void InitializeTableWatcher()
         {
-            _dependency = new OracleTableDependency<T>(ConnectionString, nomeEntidadeOracle, mapper, listaUpdate, DmlTriggerType.All, true, nomeEntidadeOracle + "ESOCIAL");
+            _dependency = new OracleTableDependency<T>(ConnectionString, nomeEntidadeOracle, mapper, listaUpdate, DmlTriggerType.All, destruirObjetosWatcher, nomeEntidadeOracle + "ESOCIAL");
             _dependency.OnChanged += OnChanged;
             _dependency.OnError += OnError;
         }
