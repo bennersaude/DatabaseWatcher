@@ -5,9 +5,7 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableWatcher", "TableWatcher\TableWatcher.csproj", "{AF2C442B-6A6C-4E3C-BF2E-EE719705D82D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseWatcherService", "DatabaseWatcherService\DatabaseWatcherService.csproj", "{679D5AC3-6BF2-4D54-9A5B-5A510034F624}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp2", "ConsoleApp2\ConsoleApp2.csproj", "{68DDB9AE-6A6E-4FF0-9C5F-4EC4EED7D6C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BennerESocialDbWatcherService", "DatabaseWatcherService\BennerESocialDbWatcherService.csproj", "{679D5AC3-6BF2-4D54-9A5B-5A510034F624}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{679D5AC3-6BF2-4D54-9A5B-5A510034F624}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{679D5AC3-6BF2-4D54-9A5B-5A510034F624}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{679D5AC3-6BF2-4D54-9A5B-5A510034F624}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68DDB9AE-6A6E-4FF0-9C5F-4EC4EED7D6C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68DDB9AE-6A6E-4FF0-9C5F-4EC4EED7D6C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68DDB9AE-6A6E-4FF0-9C5F-4EC4EED7D6C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68DDB9AE-6A6E-4FF0-9C5F-4EC4EED7D6C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

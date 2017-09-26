@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DatabaseWatcherService
+namespace BennerESocialDbWatcherService
 {
     [RunInstaller(true)]
     static class Program
@@ -20,7 +14,7 @@ namespace DatabaseWatcherService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new ServiceDBWatcher()
             };
 
             ServiceBase.Run(ServicesToRun);
