@@ -1,14 +1,11 @@
 ﻿using Oracle.ManagedDataAccess.Client;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using TableDependency.Enums;
 using TableDependency.OracleClient;
 using TableWatcher.Base;
-using TableWatcher.Interface;
 
-namespace TableWatcher
+namespace TableWatcher.Oracle
 {
     public class TableWatcherOracle<T> : TableWatcherBase<T>, ITableWatcher<T> where T : class
     {
@@ -57,7 +54,10 @@ namespace TableWatcher
             {
                 await Task.Run(() => connection.OpenAsync());
                 OracleCommand insertCommand = MontaInsertCommand(connection, e);
-                await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
+                if (insertCommand != null)
+                {
+                    await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
+                }
             }
         }
     }

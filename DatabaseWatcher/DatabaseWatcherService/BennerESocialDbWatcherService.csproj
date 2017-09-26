@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{679D5AC3-6BF2-4D54-9A5B-5A510034F624}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DatabaseWatcherService</RootNamespace>
-    <AssemblyName>DatabaseWatcherService</AssemblyName>
+    <RootNamespace>BennerESocialDbWatcherService</RootNamespace>
+    <AssemblyName>BennerESocialDbWatcherService</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,21 +46,46 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClasseTeste\Pessoa.cs" />
-    <Compile Include="ProjectInstaller.cs">
+    <Compile Include="InstallerServiceDBWatcher.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ProjectInstaller.Designer.cs">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    <Compile Include="InstallerServiceDBWatcher.Designer.cs">
+      <DependentUpon>InstallerServiceDBWatcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="Service1.cs">
+    <Compile Include="Model\Base\Eso_ModelBase.cs" />
+    <Compile Include="Model\Eso_Agente_Acidente_Trabalho.cs" />
+    <Compile Include="Model\Eso_Agente_Doenca_Profissional.cs" />
+    <Compile Include="Model\Eso_Motivo_Afastamento.cs" />
+    <Compile Include="Model\Eso_Param_Estado_Civil.cs" />
+    <Compile Include="Model\Eso_S2260_Convocacao_Trab_Inte.cs" />
+    <Compile Include="Model\Eso_S1207_Beneficio_Previdenc.cs" />
+    <Compile Include="Model\Eso_S1040_Funcao_Cargo_Comiss.cs" />
+    <Compile Include="Model\Eso_S1030_Cargo_Emprego_Public.cs" />
+    <Compile Include="Model\Eso_S1020_Lotacao_Tributaria.cs" />
+    <Compile Include="Model\Eso_S1010_Rubrica.cs" />
+    <Compile Include="Model\Eso_Estado_Civil.cs" />
+    <Compile Include="Model\Eso_Param_Tipo_Logradouro.cs" />
+    <Compile Include="Model\Eso_Tipo_Logradouro.cs" />
+    <Compile Include="Model\Eso_Tipo_Dependente.cs" />
+    <Compile Include="Model\Eso_Param_Tipo_Dependente.cs" />
+    <Compile Include="Model\Eso_Tipo_Inscricao.cs" />
+    <Compile Include="Model\Eso_Descricao_Natureza_Lesao.cs" />
+    <Compile Include="Model\Eso_Situacao_Geradora_Acidente.cs" />
+    <Compile Include="Model\Eso_Financiam_Aposent_Especial.cs" />
+    <Compile Include="Model\Eso_Parte_Corpo_Atingida.cs" />
+    <Compile Include="Model\Eso_Codificacao_Acidente_Trab.cs" />
+    <Compile Include="Model\Eso_Categoria_Trabalhador.cs" />
+    <Compile Include="Model\Eso_Versao.cs" />
+    <Compile Include="Model\Paises.cs" />
+    <Compile Include="ServiceDBWatcher.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Service1.Designer.cs">
-      <DependentUpon>Service1.cs</DependentUpon>
+    <Compile Include="ServiceDBWatcher.Designer.cs">
+      <DependentUpon>ServiceDBWatcher.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BLL\TableWatcherInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -68,8 +93,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ProjectInstaller.resx">
-      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    <EmbeddedResource Include="InstallerServiceDBWatcher.resx">
+      <DependentUpon>InstallerServiceDBWatcher.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -78,5 +104,6 @@
       <Name>TableWatcher</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,10 +5,8 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using TableDependency;
 using TableDependency.Mappers;
+using TableWatcher.Helper;
 
 namespace TableWatcher.Base
 {
@@ -44,8 +42,7 @@ namespace TableWatcher.Base
                 object[] attrs = prop.GetCustomAttributes(true);
                 foreach (object attr in attrs)
                 {
-                    var authAttr = attr as AtributoESocial;
-                    if (authAttr != null)
+                    if (attr is AtributoESocial authAttr)
                     {
                         var auth = authAttr.NomeCampoBanco;
                         valores.Add(prop, auth);
@@ -63,44 +60,72 @@ namespace TableWatcher.Base
 
         protected virtual SqlCommand MontaInsertCommand(SqlConnection connection, TableDependency.EventArgs.RecordChangedEventArgs<T> e)
         {
-            SqlCommand command = new SqlCommand();
-
-            Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
-
-            string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
-            string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
-
-            string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
-            foreach (var item in dicionarioValoresInsert)
+            try
             {
-                command.Parameters.AddWithValue(item.Key, item.Value);
+                SqlCommand command = new SqlCommand();
+
+                Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
+
+                if (dicionarioValoresInsert.Count() > 0)
+                {
+                    string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
+                    string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
+
+                    string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
+                    foreach (var item in dicionarioValoresInsert)
+                    {
+                        command.Parameters.AddWithValue(item.Key, item.Value);
+                    }
+
+                    command.Connection = connection;
+                    command.CommandText = sql;
+
+                    return command;
+                }
+                else
+                {
+                    return null;
+                }
             }
-
-            command.Connection = connection;
-            command.CommandText = sql;
-
-            return command;
+            catch 
+            {
+                return null;
+            }
         }
 
         protected virtual OracleCommand MontaInsertCommand(OracleConnection connection, TableDependency.EventArgs.RecordChangedEventArgs<T> e)
         {
-            OracleCommand command = new OracleCommand();
-
-            Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
-
-            string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
-            string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
-
-            string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
-            foreach (var item in dicionarioValoresInsert)
+            try
             {
-                command.Parameters.Add(item.Key, item.Value);
+                OracleCommand command = new OracleCommand();
+
+                Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
+
+                if (dicionarioValoresInsert.Count() > 0)
+                {
+                    string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
+                    string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
+
+                    string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
+                    foreach (var item in dicionarioValoresInsert)
+                    {
+                        command.Parameters.Add(item.Key, item.Value);
+                    }
+
+                    command.Connection = connection;
+                    command.CommandText = sql;
+
+                    return command;
+                }
+                else
+                {
+                    return null;
+                }
             }
-
-            command.Connection = connection;
-            command.CommandText = sql;
-
-            return command;
+            catch 
+            {
+                return null;
+            }
         }
 
         private Dictionary<String, object> GetValuesForInsert(TableDependency.EventArgs.RecordChangedEventArgs<T> evento)
@@ -120,8 +145,12 @@ namespace TableWatcher.Base
                     valores.Add(atributoEsocial.NomeCampoBanco, valorPropriedade);
                 }
             }
-            int valorOperacao = Convert.ToInt32(evento.ChangeType);
-            valores.Add("TipoOperacao", valorOperacao.ToString());
+
+            if (valores.Count() > 0)
+            {
+                int valorOperacao = Convert.ToInt32(evento.ChangeType);
+                valores.Add("TipoOperacao", valorOperacao.ToString());
+            }
 
             return valores;
         }

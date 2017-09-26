@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TableWatcher.Adapter;
-using TableWatcher.Base;
-using TableWatcher.Interface;
+﻿using TableWatcher.Base;
 
-namespace TableWatcher
+namespace TableWatcher.Factory
 {
     public class TableWatcherStrategy<T> where T : class
     {
-        private const string OracleConnectionString = "oracleConnectionString";
-        private const string SqlServerConnectionString = "sqlServerConnectionString";
-
         private ITableWatcher<T> TableWatcherAbstract;
 
         public TableWatcherStrategy()

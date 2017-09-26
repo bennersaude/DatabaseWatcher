@@ -54,19 +54,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapter\AdapterFactory.cs" />
-    <Compile Include="AtributoESocial.cs" />
-    <Compile Include="Interface\ITableWatcher.cs" />
+    <Compile Include="Factory\AdapterFactory.cs" />
+    <Compile Include="Helper\AtributoESocial.cs" />
+    <Compile Include="Base\ITableWatcher.cs" />
     <Compile Include="Base\TableWatcherBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TableWatcherOracle.cs" />
-    <Compile Include="TableWatcherSqlServer.cs" />
-    <Compile Include="TableWatcherStrategy.cs" />
-    <Compile Include="Util\EnumeraveisUtil.cs" />
+    <Compile Include="Oracle\TableWatcherOracle.cs" />
+    <Compile Include="SqlServer\TableWatcherSqlServer.cs" />
+    <Compile Include="Factory\TableWatcherStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

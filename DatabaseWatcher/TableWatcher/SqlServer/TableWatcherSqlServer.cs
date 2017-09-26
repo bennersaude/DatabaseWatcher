@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using TableDependency;
 using TableDependency.Enums;
 using TableDependency.SqlClient;
 using TableWatcher.Base;
-using TableWatcher.Interface;
 
-namespace TableWatcher
+namespace TableWatcher.SqlServer
 {
     public sealed class TableWatcherSqlServer<T> : TableWatcherBase<T>, ITableWatcher<T> where T : class
     {
@@ -60,7 +54,10 @@ namespace TableWatcher
             {
                 await Task.Run(() => connection.OpenAsync());
                 SqlCommand insertCommand = MontaInsertCommand(connection, e);
-                await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
+                if (insertCommand != null)
+                {
+                    await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
+                }
             }
         }
 

@@ -6,12 +6,12 @@ using System.Configuration.Install;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DatabaseWatcherService
+namespace BennerESocialDbWatcherService
 {
     [RunInstaller(true)]
-    public partial class ProjectInstaller : System.Configuration.Install.Installer
+    public partial class InstallerServiceDBWatcher : System.Configuration.Install.Installer
     {
-        public ProjectInstaller()
+        public InstallerServiceDBWatcher()
         {
             InitializeComponent();
         }

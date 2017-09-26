@@ -1,6 +1,6 @@
-﻿namespace DatabaseWatcherService
+﻿namespace BennerESocialDbWatcherService
 {
-    partial class Service1
+    partial class ServiceDBWatcher
     {
         /// <summary> 
         /// Required designer variable.
