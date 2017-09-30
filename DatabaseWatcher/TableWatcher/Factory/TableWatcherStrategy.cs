@@ -1,4 +1,4 @@
-﻿using TableWatcher.Base;
+﻿using TableWatcher.BLL.Base;
 
 namespace TableWatcher.Factory
 {

@@ -4,7 +4,7 @@ namespace BennerESocialDbWatcherService.Model
 {
     public class Paises
     {
-        [AtributoESocial("CODIGOESOCIAL")]
+        [AtributoESocial("CODIGOEXPORTACAO")]
         public int CodigoESocial { get; set; }
 
         [AtributoESocial("NOME")]

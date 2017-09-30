@@ -2,68 +2,42 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using TableDependency.Mappers;
 using TableWatcher.Helper;
 
-namespace TableWatcher.Base
+namespace TableWatcher.DAO.Base
 {
-    public abstract class TableWatcherBase<T> where T : class
+    public abstract class TableWatcherBaseDAO<T> where T : class
     {
+        private Guid uiid;
         protected ModelToTableMapper<T> mapper;
 
-        protected String nomeEntidade = GetNomeEntidadeSqlServer(17); //Nas versões atuais do banco de dados caso o nome possua mais de 17 caracteres será retornado um erro;
-        protected String nomeEntidadeOracle = GetNomeEntidadeSqlServer(17).ToUpper(); //Nas versões atuais do banco de dados caso o nome possua mais de 17 caracteres será retornado um erro;
+        protected String nomeTabelaBase { get; private set; }
+        protected String nomeObjetosEstrutura { get; private set; }
+        protected String nomeTabelaEspelho { get; private set; }
 
-        protected Boolean destruirObjetosWatcher = Convert.ToBoolean(ConfigurationManager.AppSettings["destruirObjetosWatcher"]);
+        protected abstract string handleZTabela { get; set; }
 
-        protected IList<String> listaUpdate;
-
-        protected virtual void MapearEntidade()
+        protected virtual void InicializarObjetos(String handleEntidade)
         {
-            mapper = new ModelToTableMapper<T>();
-            listaUpdate = new List<String>();
-            foreach (var prop in GetValuesForMapper())
-            {
-                mapper.AddMapping(prop.Key, prop.Value);
-                listaUpdate.Add(prop.Value);
-            }
+            nomeTabelaBase = GetNomeEntidade();
+            nomeObjetosEstrutura = GetNomeObjetosEstrutura(handleEntidade);
+            nomeTabelaEspelho = GetNomeTabelaEspelho();
         }
 
-        private Dictionary<PropertyInfo, string> GetValuesForMapper()
-        {
-            Dictionary<PropertyInfo, string> valores = new Dictionary<PropertyInfo, string>();
-
-            PropertyInfo[] props = typeof(T).GetProperties();
-            foreach (PropertyInfo prop in props)
-            {
-                object[] attrs = prop.GetCustomAttributes(true);
-                foreach (object attr in attrs)
-                {
-                    if (attr is AtributoESocial authAttr)
-                    {
-                        var auth = authAttr.NomeCampoBanco;
-                        valores.Add(prop, auth);
-                    }
-                }
-            }
-
-            return valores;
-        }
-
-        private static string GetNomeEntidadeSqlServer(int TamanhoMaximo)
-        {
-            return typeof(T).Name.Length > TamanhoMaximo ? typeof(T).Name.Substring(0, TamanhoMaximo) : typeof(T).Name;
-        }
+        #region Insert Command
 
         protected virtual SqlCommand MontaInsertCommand(SqlConnection connection, TableDependency.EventArgs.RecordChangedEventArgs<T> e)
         {
             try
             {
-                SqlCommand command = new SqlCommand();
+                uiid = Guid.NewGuid();
 
+                SqlCommand command = new SqlCommand();
                 Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
 
                 if (dicionarioValoresInsert.Count() > 0)
@@ -71,7 +45,7 @@ namespace TableWatcher.Base
                     string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
                     string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
 
-                    string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
+                    string sql = $"INSERT INTO {nomeTabelaEspelho} (UIID, {fields}) values ('{uiid.ToString()}', {values})";
                     foreach (var item in dicionarioValoresInsert)
                     {
                         command.Parameters.AddWithValue(item.Key, item.Value);
@@ -87,7 +61,7 @@ namespace TableWatcher.Base
                     return null;
                 }
             }
-            catch 
+            catch
             {
                 return null;
             }
@@ -104,9 +78,9 @@ namespace TableWatcher.Base
                 if (dicionarioValoresInsert.Count() > 0)
                 {
                     string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
-                    string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
+                    string values = String.Join(",", dicionarioValoresInsert.Select(s => $":{s.Key}"));
 
-                    string sql = $"INSERT INTO {nomeEntidade}ESOCIAL ({fields}) values ({values})";
+                    string sql = $"INSERT INTO {nomeTabelaEspelho} (UIID, {fields}) values (sys_guid(), {values})";
                     foreach (var item in dicionarioValoresInsert)
                     {
                         command.Parameters.Add(item.Key, item.Value);
@@ -122,7 +96,7 @@ namespace TableWatcher.Base
                     return null;
                 }
             }
-            catch 
+            catch
             {
                 return null;
             }
@@ -136,8 +110,7 @@ namespace TableWatcher.Base
 
             foreach (PropertyInfo prop in propriedades)
             {
-                object[] attrs = prop.GetCustomAttributes(true);
-                foreach (object attr in attrs)
+                foreach (object attr in prop.GetCustomAttributes(true))
                 {
                     var atributoEsocial = attr as AtributoESocial;
                     object valorPropriedade = prop.GetValue(evento.Entity, null);
@@ -146,13 +119,32 @@ namespace TableWatcher.Base
                 }
             }
 
-            if (valores.Count() > 0)
-            {
-                int valorOperacao = Convert.ToInt32(evento.ChangeType);
-                valores.Add("TipoOperacao", valorOperacao.ToString());
-            }
+            int valorOperacao = Convert.ToInt32(evento.ChangeType);
+            valores.Add("TIPOOPERACAO", valorOperacao.ToString());
+            valores.Add("DATAINCLUSAO", DateTime.Now);
 
             return valores;
         }
+
+        #endregion
+
+        #region Nome das Entidades
+
+        private string GetNomeEntidade()
+        {
+            return Utilidades<T>.GetNomeEntidade();
+        }
+
+        private string GetNomeObjetosEstrutura(String handleEntidade)
+        {
+            return Utilidades<T>.GetNomeObjetosEstrutura(handleEntidade);
+        }
+
+        private string GetNomeTabelaEspelho()
+        {
+            return Utilidades<T>.GetNomeObjetosEstrutura(nomeObjetosEstrutura);
+        }
+
+        #endregion
     }
 }

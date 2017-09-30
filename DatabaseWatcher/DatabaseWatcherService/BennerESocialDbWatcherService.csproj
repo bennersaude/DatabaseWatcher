@@ -33,7 +33,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.12.2.1100\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess.EntityFramework, Version=6.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.EntityFramework.12.2.1100\lib\net45\Oracle.ManagedDataAccess.EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
@@ -52,30 +66,6 @@
     <Compile Include="InstallerServiceDBWatcher.Designer.cs">
       <DependentUpon>InstallerServiceDBWatcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="Model\Base\Eso_ModelBase.cs" />
-    <Compile Include="Model\Eso_Agente_Acidente_Trabalho.cs" />
-    <Compile Include="Model\Eso_Agente_Doenca_Profissional.cs" />
-    <Compile Include="Model\Eso_Motivo_Afastamento.cs" />
-    <Compile Include="Model\Eso_Param_Estado_Civil.cs" />
-    <Compile Include="Model\Eso_S2260_Convocacao_Trab_Inte.cs" />
-    <Compile Include="Model\Eso_S1207_Beneficio_Previdenc.cs" />
-    <Compile Include="Model\Eso_S1040_Funcao_Cargo_Comiss.cs" />
-    <Compile Include="Model\Eso_S1030_Cargo_Emprego_Public.cs" />
-    <Compile Include="Model\Eso_S1020_Lotacao_Tributaria.cs" />
-    <Compile Include="Model\Eso_S1010_Rubrica.cs" />
-    <Compile Include="Model\Eso_Estado_Civil.cs" />
-    <Compile Include="Model\Eso_Param_Tipo_Logradouro.cs" />
-    <Compile Include="Model\Eso_Tipo_Logradouro.cs" />
-    <Compile Include="Model\Eso_Tipo_Dependente.cs" />
-    <Compile Include="Model\Eso_Param_Tipo_Dependente.cs" />
-    <Compile Include="Model\Eso_Tipo_Inscricao.cs" />
-    <Compile Include="Model\Eso_Descricao_Natureza_Lesao.cs" />
-    <Compile Include="Model\Eso_Situacao_Geradora_Acidente.cs" />
-    <Compile Include="Model\Eso_Financiam_Aposent_Especial.cs" />
-    <Compile Include="Model\Eso_Parte_Corpo_Atingida.cs" />
-    <Compile Include="Model\Eso_Codificacao_Acidente_Trab.cs" />
-    <Compile Include="Model\Eso_Categoria_Trabalhador.cs" />
-    <Compile Include="Model\Eso_Versao.cs" />
     <Compile Include="Model\Paises.cs" />
     <Compile Include="ServiceDBWatcher.cs">
       <SubType>Component</SubType>
@@ -91,6 +81,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InstallerServiceDBWatcher.resx">
