@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
-using TableWatcher.Base;
-using TableWatcher.Oracle;
-using TableWatcher.SqlServer;
+using TableWatcher.BLL.Base;
+using TableWatcher.BLL.Oracle;
+using TableWatcher.BLL.SqlServer;
 
 namespace TableWatcher.Factory
 {
@@ -12,9 +12,7 @@ namespace TableWatcher.Factory
 
         public ITableWatcher<T> GetAdapter()
         {
-            string connectionString;
-
-            connectionString = GetConnectionString(OracleConnectionString);
+            string connectionString = GetConnectionString(OracleConnectionString);
             if (!string.IsNullOrEmpty(connectionString))
             {
                 return new TableWatcherOracle<T>(connectionString);

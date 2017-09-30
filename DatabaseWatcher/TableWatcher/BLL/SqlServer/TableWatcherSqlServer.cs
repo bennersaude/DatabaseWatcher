@@ -3,24 +3,39 @@ using System.Data.SqlClient;
 using System.Threading.Tasks;
 using TableDependency.Enums;
 using TableDependency.SqlClient;
-using TableWatcher.Base;
+using TableWatcher.BLL.Base;
+using TableWatcher.DAO.SqlServer;
 
-namespace TableWatcher.SqlServer
+namespace TableWatcher.BLL.SqlServer
 {
     public sealed class TableWatcherSqlServer<T> : TableWatcherBase<T>, ITableWatcher<T> where T : class
     {
-        public readonly String ConnectionString;
+        public String ConnectionString { get; private set; }
         private SqlTableDependency<T> _dependency;
+
+        protected override string handleZTabela { get; set; }
+        public TableWatcherSqlServerDAO<T> daoTableWatcherSqlServer { get; set; }
 
         public TableWatcherSqlServer(String connectionString)
         {
-            ConnectionString = connectionString;
+            InicializarObjetosSqlServer(connectionString);
             MapearEntidade();
+        }
+
+        private void InicializarObjetosSqlServer(string connectionString)
+        {
+            ConnectionString = connectionString;
+            string nomeClasse = typeof(T).Name;
+
+            daoTableWatcherSqlServer = new TableWatcherSqlServerDAO<T>(ConnectionString, nomeClasse);
+
+            string handleZTabela = Task.Run(() => daoTableWatcherSqlServer.GetHandleZTabela(nomeClasse)).Result;
+            base.InicializarObjetos(handleZTabela);
         }
 
         public void InitializeTableWatcher()
         {
-            _dependency = new SqlTableDependency<T>(ConnectionString, nomeEntidade, mapper, listaUpdate, DmlTriggerType.All, destruirObjetosWatcher, nomeEntidade + "ESOCIAL");
+            _dependency = new SqlTableDependency<T>(ConnectionString, nomeTabelaBase, mapper, listaUpdate, DmlTriggerType.All, destruirObjetosWatcher, nomeObjetosEstrutura);
             _dependency.OnChanged += OnChanged;
             _dependency.OnError += OnError;
         }
@@ -44,23 +59,8 @@ namespace TableWatcher.SqlServer
         {
             if (e.ChangeType != ChangeType.None)
             {
-                Task.Run(() => InserirOnChange(e));
+                Task.Run(() => daoTableWatcherSqlServer.InserirOnChange(e));
             }
         }
-
-        public async Task InserirOnChange(TableDependency.EventArgs.RecordChangedEventArgs<T> e)
-        {
-            using (SqlConnection connection = new SqlConnection(ConnectionString))
-            {
-                await Task.Run(() => connection.OpenAsync());
-                SqlCommand insertCommand = MontaInsertCommand(connection, e);
-                if (insertCommand != null)
-                {
-                    await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
-                }
-            }
-        }
-
-
     }
 }

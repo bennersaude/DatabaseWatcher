@@ -3,24 +3,39 @@ using System;
 using System.Threading.Tasks;
 using TableDependency.Enums;
 using TableDependency.OracleClient;
-using TableWatcher.Base;
+using TableWatcher.BLL.Base;
+using TableWatcher.DAO.Oracle;
 
-namespace TableWatcher.Oracle
+namespace TableWatcher.BLL.Oracle
 {
     public class TableWatcherOracle<T> : TableWatcherBase<T>, ITableWatcher<T> where T : class
     {
-        public readonly String ConnectionString;
+        public String ConnectionString { get; private set; }
         private OracleTableDependency<T> _dependency;
+
+        protected override string handleZTabela { get; set; }
+        public TableWatcherOracleDAO<T> daoTableWatcherOracle { get; set; }
 
         public TableWatcherOracle(String connectionString)
         {
-            ConnectionString = connectionString;
+            InicializarObjetosOracle(connectionString);
             MapearEntidade();
+        }
+
+        private void InicializarObjetosOracle(string connectionString)
+        {
+            ConnectionString = connectionString;
+            string nomeClasse = typeof(T).Name;
+
+            daoTableWatcherOracle = new TableWatcherOracleDAO<T>(ConnectionString, nomeClasse);
+
+            string handleZTabela = Task.Run(() => daoTableWatcherOracle.GetHandleZTabela(nomeClasse)).Result;
+            base.InicializarObjetos(handleZTabela);
         }
 
         public void InitializeTableWatcher()
         {
-            _dependency = new OracleTableDependency<T>(ConnectionString, nomeEntidadeOracle, mapper, listaUpdate, DmlTriggerType.All, destruirObjetosWatcher, nomeEntidadeOracle + "ESOCIAL");
+            _dependency = new OracleTableDependency<T>(ConnectionString, nomeTabelaBase, mapper, listaUpdate, DmlTriggerType.All, destruirObjetosWatcher, nomeObjetosEstrutura);
             _dependency.OnChanged += OnChanged;
             _dependency.OnError += OnError;
         }
@@ -44,20 +59,7 @@ namespace TableWatcher.Oracle
         {
             if (e.ChangeType != ChangeType.None)
             {
-                Task.Run(() => InserirOnChange(e));
-            }
-        }
-
-        public async Task InserirOnChange(TableDependency.EventArgs.RecordChangedEventArgs<T> e)
-        {
-            using (OracleConnection connection = new OracleConnection(ConnectionString))
-            {
-                await Task.Run(() => connection.OpenAsync());
-                OracleCommand insertCommand = MontaInsertCommand(connection, e);
-                if (insertCommand != null)
-                {
-                    await Task.Run(() => insertCommand.ExecuteNonQueryAsync());
-                }
+                Task.Run(() => daoTableWatcherOracle.InserirOnChange(e));
             }
         }
     }
