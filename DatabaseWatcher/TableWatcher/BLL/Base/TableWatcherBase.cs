@@ -13,10 +13,8 @@ namespace TableWatcher.BLL.Base
 {
     public abstract class TableWatcherBase<T> where T : class
     {
-        private Guid uiid;
         protected ModelToTableMapper<T> mapper;
-
-
+        
         protected String nomeTabelaBase { get; private set; }
         protected String nomeObjetosEstrutura { get; private set; }
         protected String nomeTabelaEspelho { get; private set; }
@@ -85,7 +83,7 @@ namespace TableWatcher.BLL.Base
 
         private string GetNomeTabelaEspelho()
         {
-            return Utilidades<T>.GetNomeObjetosEstrutura(nomeObjetosEstrutura); 
+            return Utilidades<T>.GetNomeTabelaEspelho(nomeObjetosEstrutura); 
         }
 
         #endregion

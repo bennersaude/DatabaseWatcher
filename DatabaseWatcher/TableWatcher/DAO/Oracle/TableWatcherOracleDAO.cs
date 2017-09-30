@@ -10,19 +10,18 @@ namespace TableWatcher.DAO.Oracle
     public class TableWatcherOracleDAO<T> : TableWatcherBaseDAO<T> where T : class
     {
         public String ConnectionString { get; private set; }
-        private OracleTableDependency<T> _dependency;
 
         protected override string handleZTabela { get; set; }
 
-        public TableWatcherOracleDAO(String connectionString)
+        public TableWatcherOracleDAO(String connectionString, String nomeClasse)
         {
-            InicializarObjetosOracle(connectionString);
+            InicializarObjetosOracle(connectionString, nomeClasse);
         }
 
-        private void InicializarObjetosOracle(string connectionString)
+        private void InicializarObjetosOracle(string connectionString, string nomeClasse)
         {
             ConnectionString = connectionString;
-            string nomeClasse = typeof(T).Name;
+            string NomeClasse = nomeClasse;
 
             string handleZTabela = Task.Run(() => GetHandleZTabela(nomeClasse)).Result;
             base.InicializarObjetos(handleZTabela);

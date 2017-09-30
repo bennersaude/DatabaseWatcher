@@ -25,12 +25,11 @@ namespace TableWatcher.BLL.Oracle
         private void InicializarObjetosOracle(string connectionString)
         {
             ConnectionString = connectionString;
-
-            daoTableWatcherOracle = new TableWatcherOracleDAO<T>(ConnectionString);
-
             string nomeClasse = typeof(T).Name;
-            string handleZTabela = Task.Run(() => daoTableWatcherOracle.GetHandleZTabela(nomeClasse)).Result;
 
+            daoTableWatcherOracle = new TableWatcherOracleDAO<T>(ConnectionString, nomeClasse);
+
+            string handleZTabela = Task.Run(() => daoTableWatcherOracle.GetHandleZTabela(nomeClasse)).Result;
             base.InicializarObjetos(handleZTabela);
         }
 

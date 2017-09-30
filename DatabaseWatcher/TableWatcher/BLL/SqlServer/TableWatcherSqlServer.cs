@@ -27,6 +27,8 @@ namespace TableWatcher.BLL.SqlServer
             ConnectionString = connectionString;
             string nomeClasse = typeof(T).Name;
 
+            daoTableWatcherSqlServer = new TableWatcherSqlServerDAO<T>(ConnectionString, nomeClasse);
+
             string handleZTabela = Task.Run(() => daoTableWatcherSqlServer.GetHandleZTabela(nomeClasse)).Result;
             base.InicializarObjetos(handleZTabela);
         }

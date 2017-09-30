@@ -10,21 +10,20 @@ namespace TableWatcher.DAO.SqlServer
     public sealed class TableWatcherSqlServerDAO<T> : TableWatcherBaseDAO<T> where T : class
     {
         public String ConnectionString { get; private set; }
-        private SqlTableDependency<T> _dependency;
 
         protected override string handleZTabela { get; set; }
 
-        public TableWatcherSqlServerDAO(String connectionString)
+        public TableWatcherSqlServerDAO(String connectionString, String nomeClasse)
         {
-            InicializarObjetosSqlServer(connectionString);
+            InicializarObjetosSqlServer(connectionString, nomeClasse);
         }
 
-        private void InicializarObjetosSqlServer(string connectionString)
+        private void InicializarObjetosSqlServer(string connectionString, string nomeClasse)
         {
             ConnectionString = connectionString;
-            string nomeClasse = typeof(T).Name;
+            string NomeClasse = nomeClasse;
 
-            string handleZTabela = Task.Run(() => GetHandleZTabela(nomeClasse)).Result;
+            handleZTabela = Task.Run(() => GetHandleZTabela(nomeClasse)).Result;
             base.InicializarObjetos(handleZTabela); ;
         }
 

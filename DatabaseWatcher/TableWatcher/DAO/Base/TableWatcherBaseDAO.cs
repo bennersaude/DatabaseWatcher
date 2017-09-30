@@ -142,7 +142,7 @@ namespace TableWatcher.DAO.Base
 
         private string GetNomeTabelaEspelho()
         {
-            return Utilidades<T>.GetNomeObjetosEstrutura(nomeObjetosEstrutura);
+            return Utilidades<T>.GetNomeTabelaEspelho(nomeObjetosEstrutura);
         }
 
         #endregion
