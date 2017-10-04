@@ -1,4 +1,5 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using Newtonsoft.Json;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -38,18 +39,14 @@ namespace TableWatcher.DAO.Base
                 uiid = Guid.NewGuid();
 
                 SqlCommand command = new SqlCommand();
-                Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
+                String jsonInsert = GetJasonValueForInsert(e);
 
-                if (dicionarioValoresInsert.Count() > 0)
+                if (!String.IsNullOrEmpty(jsonInsert))
                 {
-                    string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
-                    string values = String.Join(",", dicionarioValoresInsert.Select(s => $"@{s.Key}"));
+                    string sql = $"INSERT INTO {nomeTabelaEspelho} (UIID, VALORES) values (@UIID, @VALORES)";
 
-                    string sql = $"INSERT INTO {nomeTabelaEspelho} (UIID, {fields}) values ('{uiid.ToString()}', {values})";
-                    foreach (var item in dicionarioValoresInsert)
-                    {
-                        command.Parameters.AddWithValue(item.Key, item.Value);
-                    }
+                    command.Parameters.AddWithValue("UIID", uiid.ToString());
+                    command.Parameters.AddWithValue("VALORES", jsonInsert);
 
                     command.Connection = connection;
                     command.CommandText = sql;
@@ -73,18 +70,12 @@ namespace TableWatcher.DAO.Base
             {
                 OracleCommand command = new OracleCommand();
 
-                Dictionary<String, object> dicionarioValoresInsert = GetValuesForInsert(e);
+                String jsonInsert = GetJasonValueForInsert(e);
 
-                if (dicionarioValoresInsert.Count() > 0)
+                if (!String.IsNullOrEmpty(jsonInsert))
                 {
-                    string fields = String.Join(",", dicionarioValoresInsert.Select(s => s.Key));
-                    string values = String.Join(",", dicionarioValoresInsert.Select(s => $":{s.Key}"));
-
-                    string sql = $"INSERT INTO {nomeTabelaEspelho} (UIID, {fields}) values (sys_guid(), {values})";
-                    foreach (var item in dicionarioValoresInsert)
-                    {
-                        command.Parameters.Add(item.Key, item.Value);
-                    }
+                    string sql = $"INSERT INTO {nomeTabelaEspelho} (UIID, VALORES) values (sys_guid(), :VALORES)";
+                    command.Parameters.Add("VALORES", jsonInsert);
 
                     command.Connection = connection;
                     command.CommandText = sql;
@@ -102,28 +93,41 @@ namespace TableWatcher.DAO.Base
             }
         }
 
-        private Dictionary<String, object> GetValuesForInsert(TableDependency.EventArgs.RecordChangedEventArgs<T> evento)
+        private String GetJasonValueForInsert(TableDependency.EventArgs.RecordChangedEventArgs<T> evento)
         {
-            Dictionary<String, object> valores = new Dictionary<String, object>();
-
-            List<PropertyInfo> propriedades = new List<PropertyInfo>(evento.Entity.GetType().GetProperties());
-
-            foreach (PropertyInfo prop in propriedades)
+            String jasonValues = String.Empty;
+            try
             {
-                foreach (object attr in prop.GetCustomAttributes(true))
-                {
-                    var atributoEsocial = attr as AtributoESocial;
-                    object valorPropriedade = prop.GetValue(evento.Entity, null);
+                List<object> valores = new List<object>(); 
+               
+                List<PropertyInfo> propriedades = new List<PropertyInfo>(evento.Entity.GetType().GetProperties());
 
-                    valores.Add(atributoEsocial.NomeCampoBanco, valorPropriedade);
+                foreach (PropertyInfo prop in propriedades)
+                {
+                    if (prop.Name.ToUpper().Equals("HANDLE"))
+                        valores.Add(prop.GetValue(evento.Entity, null));
+
+                    foreach (object attr in prop.GetCustomAttributes(true))
+                    {
+                        var atributoEsocial = attr as AtributoESocial;
+                        object valorPropriedade = prop.GetValue(evento.Entity, null);
+
+                        valores.Add(valorPropriedade);
+                    }
                 }
+
+                valores.Add(Convert.ToInt32(evento.ChangeType));
+                valores.Add(DateTime.Now);
+                valores.Add(ConfigurationManager.AppSettings["versaoESocial"]);
+
+                jasonValues = JsonConvert.SerializeObject(valores);
+            }
+            catch
+            {
+                jasonValues = null;
             }
 
-            int valorOperacao = Convert.ToInt32(evento.ChangeType);
-            valores.Add("TIPOOPERACAO", valorOperacao.ToString());
-            valores.Add("DATAINCLUSAO", DateTime.Now);
-
-            return valores;
+            return jasonValues;
         }
 
         #endregion
