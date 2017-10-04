@@ -24,7 +24,7 @@ namespace TableWatcher.DAO.SqlServer
             string NomeClasse = nomeClasse;
 
             handleZTabela = Task.Run(() => GetHandleZTabela(nomeClasse)).Result;
-            base.InicializarObjetos(handleZTabela); ;
+            base.InicializarObjetos(handleZTabela); 
         }
 
      
