@@ -1,5 +1,4 @@
-﻿using Oracle.ManagedDataAccess.Client;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using TableDependency.Enums;
 using TableDependency.OracleClient;
